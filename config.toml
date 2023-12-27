@@ -1,17 +1,18 @@
-baseurl = "/"
-title = "Yihui's Twitter Feeds"
+baseurl = "https://t.yihui.org/"
+title = "Yihui's Social Feeds"
 author = "Yihui Xie"
 languagecode = "en"
-theme = "hugo-black-and-light-theme"
-paginate = 10
-ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\\.md$"]
+theme = "hugo-xmin"
 rssLimit = 30
+
+[pagination]
+  pagerSize = 10
 
 [permalinks]
   post = "/post/:year/:month/:day/"
 
 [params]
-  sitename = "Yihui's Twitter Feeds"
+  sitename = "Yihui's Social Feeds"
 
 [[menu.main]]
     name = "Home"
@@ -35,13 +36,13 @@ rssLimit = 30
     weight = 5
 [[menu.main]]
     name = "Github"
-    url  = "https://github.com/yihui/twitter-blogdown"
+    url  = "https://github.com/yihui/social-blogdown"
     weight = 6
-
-[blackfriday]
-  hrefTargetBlank = true
 
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+      hardWraps = true
+    [markup.goldmark.extensions]
+      linkify = false

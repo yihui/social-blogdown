@@ -2,30 +2,27 @@ on:
   workflow_dispatch:
   schedule:
     - cron:  '0 12 * * 0'
-name: twitter-blogdown
+name: social-blogdown
 
 jobs:
   fetch-tweets:
     runs-on: macOS-latest
     env:
-      TWITTER_TOKEN: ${{ secrets.TWITTER_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@HEAD
       - uses: r-lib/actions/setup-r@HEAD
       - name: Cache R packages
-        uses: actions/cache@v2
+        uses: actions/cache@HEAD
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-
-      - name: Fetch Tweets
+      - name: Fetch Messages
         run: |
-          echo $TWITTER_TOKEN | base64 -d -o ~/default.rds
           Rscript R/fetch.R
       - name: Push results
         run: |
-          rm ~/default.rds
           git add --all *
           git commit -m"Weekly update"
           git push -q https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:master
