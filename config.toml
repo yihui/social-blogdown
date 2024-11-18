@@ -6,7 +6,7 @@ theme = "hugo-xmin"
 rssLimit = 30
 
 [pagination]
-  pagerSize = 10
+  pagerSize = 30
 
 [permalinks]
   post = "/post/:year/:month/:day/"
