@@ -3,4 +3,4 @@ if (file.exists("~/.Rprofile")) {
 }
 
 # fix Hugo version
-options(blogdown.hugo.version = "0.134.2")
+options(blogdown.hugo.version = "0.139.0")

@@ -3,7 +3,6 @@ title = "Yihui's Social Feeds"
 author = "Yihui Xie"
 languagecode = "en"
 theme = "hugo-xmin"
-rssLimit = 30
 
 [pagination]
   pagerSize = 30
@@ -13,6 +12,10 @@ rssLimit = 30
 
 [params]
   sitename = "Yihui's Social Feeds"
+
+[services]
+  [services.rss]
+    limit = 30
 
 [[menu.main]]
     name = "Home"
