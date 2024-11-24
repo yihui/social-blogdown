@@ -5,10 +5,8 @@ on:
 name: social-blogdown
 
 jobs:
-  fetch-tweets:
-    runs-on: macOS-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  fetch-messages:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@HEAD
       - uses: r-lib/actions/setup-r@HEAD
@@ -23,6 +21,7 @@ jobs:
           Rscript R/fetch.R
       - name: Push results
         run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git add --all *
-          git commit -m"Weekly update"
-          git push -q https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:master
+          git commit -m "Weekly update" && git push || true
