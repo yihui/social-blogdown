@@ -4,7 +4,7 @@ d = Sys.Date()
 if (!require('xfun')) install.packages('xfun')
 xfun::pkg_load2('jsonlite')
 
-update.packages(ask = FALSE, checkBuilt = TRUE)
+xfun:::pkg_update()
 
 if (!file.exists(f <- 'R/keywords.csv')) writeLines('query,since,limit', f)
 m = read.csv(f, colClasses = c('character', 'character', 'integer'))
