@@ -40,7 +40,7 @@ for (i in seq_len(NROW(m))) {
   h = s$author$handle
   b = s$record$text
   b = gsub('```', '\\`\\`\\`', b, fixed = TRUE)
-  b = gsub('\\{\\{<(.*?)>}}', '{{&lt;\\1&gt;}}', b)  # show shortcode verbatim
+  b = gsub('\\{\\{<(.*?)>}', '{{&lt;\\1&gt;}', b)  # show shortcode verbatim
   b = gsub('\\s*$', '', b)
   # use most liked post as title
   if (max(s$likeCount) > n_like) {
