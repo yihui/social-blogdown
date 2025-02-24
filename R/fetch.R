@@ -21,7 +21,7 @@ search_bsky = function(query, since = 0, limit = 0) {
     extra = paste0('&sort=top&&until=', format(Sys.time() - 7 * 24 * 3600, fmt))
   }
   u = sprintf(
-    'https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?q=%s&since=%s&limit=%d%s',
+    'https://api.bsky.app/xrpc/app.bsky.feed.searchPosts?q=%s&since=%s&limit=%d%s',
     query, since, limit, extra
   )
   x = xfun::read_utf8(u)
