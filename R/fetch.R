@@ -2,9 +2,34 @@ dir.create('content/post', showWarnings = FALSE)
 d = Sys.Date()
 
 if (!require('xfun')) install.packages('xfun')
-xfun::pkg_load2('jsonlite')
+xfun::pkg_load2('jsonlite', 'curl')
 
 xfun:::pkg_update()
+
+# authenticate against the PDS; the public AppView (api.bsky.app) blocks
+# datacenter IPs (e.g. GitHub Actions) with HTTP 403, so we go through an
+# authenticated session which is not IP-blocked
+bsky_login = function() {
+  id = Sys.getenv('BSKY_HANDLE'); pw = Sys.getenv('BSKY_APP_PASSWORD')
+  if (id == '' || pw == '')
+    stop('Set BSKY_HANDLE and BSKY_APP_PASSWORD (an app password, not your main password).')
+  h = curl::new_handle()
+  curl::handle_setheaders(h, 'Content-Type' = 'application/json')
+  curl::handle_setopt(
+    h, post = TRUE,
+    postfields = jsonlite::toJSON(
+      list(identifier = id, password = pw), auto_unbox = TRUE
+    )
+  )
+  res = curl::curl_fetch_memory(
+    'https://bsky.social/xrpc/com.atproto.server.createSession', handle = h
+  )
+  if (res$status_code != 200)
+    stop('Bluesky login failed (HTTP ', res$status_code, '): ', rawToChar(res$content))
+  jsonlite::fromJSON(rawToChar(res$content))$accessJwt
+}
+
+jwt = bsky_login()
 
 if (!file.exists(f <- 'R/keywords.csv')) writeLines('query,since,limit', f)
 m = read.csv(f, colClasses = c('character', 'character', 'integer'))
@@ -21,11 +46,15 @@ search_bsky = function(query, since = 0, limit = 0) {
     extra = paste0('&sort=top&&until=', format(Sys.time() - 7 * 24 * 3600, fmt))
   }
   u = sprintf(
-    'https://api.bsky.app/xrpc/app.bsky.feed.searchPosts?q=%s&since=%s&limit=%d%s',
-    query, since, limit, extra
+    'https://bsky.social/xrpc/app.bsky.feed.searchPosts?q=%s&since=%s&limit=%d%s',
+    utils::URLencode(query, reserved = TRUE), since, limit, extra
   )
-  x = xfun::read_utf8(u)
-  jsonlite::fromJSON(x)$posts
+  h = curl::new_handle()
+  curl::handle_setheaders(h, Authorization = paste('Bearer', jwt))
+  res = curl::curl_fetch_memory(u, handle = h)
+  if (res$status_code != 200)
+    stop('searchPosts failed (HTTP ', res$status_code, '): ', rawToChar(res$content))
+  jsonlite::fromJSON(rawToChar(res$content))$posts
 }
 
 for (i in seq_len(NROW(m))) {

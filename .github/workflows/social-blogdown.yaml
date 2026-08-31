@@ -17,6 +17,9 @@ jobs:
           key: ${{ runner.os }}-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-
       - name: Fetch Messages
+        env:
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
         run: |
           Rscript R/fetch.R
       - name: Push results
